@@ -17,12 +17,12 @@ M.set_collection("Y")
 import matplotlib.pyplot as plt
 
 ##### Time Analysis to Compare Pulses ######
-L.apply("calibrate", cal = 2.2, inplace = True)
+L.apply("calibrate", cal = 2.2, inplace = True)			# Vertically stretch, detrend, and horizontally shift signals to align
 L.apply("detrend", mode = "linear", inplace = True)
 M.apply("calibrate", cal = 0.185, inplace = True)
 M.apply("detrend", mode = "linear", inplace = True)
 M.apply("shift", tau = 0.00002, inplace = True)
-Npts = L.r / (2*500000)
+Npts = L.r / (2*500000)							# Bin_average to max frequency of 500 kHz
 L.apply("bin_average", Npts = Npts, inplace = True)
 M.apply("bin_average", Npts = Npts, inplace = True)
 
@@ -37,7 +37,7 @@ for i in I:
 	Mi.plot(tmin=2.8e-4, tmax = 3e-4, ax = ax, c = "b")
 	plt.suptitle("Acoustic Signal as Recorded by Microphone and Laser Deflection")
 	pulse_num = "Pulse #" + str(i)
-	plt.title = pulse_num
+	plt.title(pulse_num)
 	x_ticks = [0.0002800, 0.0002825, 0.0002850, 0.0002875, 0.0002900, 0.0002925, 0.0002950, 0.0002975, 0.0003000]
 	x_labels = [280.0, 282.5, 285.0, 287.5, 290.0, 292.5, 295.0, 297.5, 300.0]
 	plt.xticks(ticks = x_ticks, labels = x_labels)
@@ -59,5 +59,4 @@ plt.xticks(ticks = x_ticks, labels = x_labels)
 plt.xlabel("Time (us)")
 plt.ylabel("Voltage (V)")
 plt.legend(["Laser", "Microphone"], loc = "best")
-
-
+plt.show()
