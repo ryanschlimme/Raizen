@@ -4,21 +4,16 @@
 # Comparing time domain laser pulses to calibrated microphone reading at energies scaling from 14 to 19 kJ in 1 kJ increments. Applying known 0.00068 V/Pa offset to microphone to transfer to pressure signal. Still searching for laser transfer function.
 # Noticed we are matching low frequecies well but exhibiting high frequency oscillations. Quantum noise? Or actual detection?
 
-f_name_14 = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\ene_scan\laser-X_microphone-Y0.00068V-per-Pa\iter_0.tdms" # create a variable pointing to file (change Ryan Schlimme to ryans)
-f_name_15 = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\ene_scan\laser-X_microphone-Y0.00068V-per-Pa\iter_1.tdms"
-f_name_16 = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\ene_scan\laser-X_microphone-Y0.00068V-per-Pa\iter_2.tdms"
-f_name_17 = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\ene_scan\laser-X_microphone-Y0.00068V-per-Pa\iter_3.tdms"
-f_name_18 = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\ene_scan\laser-X_microphone-Y0.00068V-per-Pa\iter_4.tdms"
-f_name_19 = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\ene_scan\laser-X_microphone-Y0.00068V-per-Pa\iter_5.tdms"
+f_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\ene_scan\laser-X_microphone-Y0.00068V-per-Pa\iter_" + str(i) + ".tdms" for i in range(6)] # create a variable pointing to file (change Ryan Schlimme to ryans)
 
 import sys
-													# allows access to path.append
-sys.path.append(r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
-from time_series import CollectionTDMS								# pull function from time_series module
 import matplotlib.pyplot as plt
 
-N = list(range(0,6))
-f_name_index = [f_name_14, f_name_15, f_name_16, f_name_17, f_name_18, f_name_19]
+sys.path.append(r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
+from time_series import CollectionTDMS								# pull function from time_series module
+
+
+N = list(range(6))
 
 for n in N:
 	f_name = f_name_index[n]
