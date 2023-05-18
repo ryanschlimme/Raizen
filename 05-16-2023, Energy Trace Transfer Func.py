@@ -13,7 +13,7 @@
 # Using fit result H(f), correct laser voltage signal
 
 
-f_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\ene_scan_laserX_microphoneY\iter_" + str(i) + ".tdms" for i in range(6)] # create a variable pointing to file (change Ryan Schlimme to ryans)
+f_name_index = [r"C:\Users\ryans\OneDrive\Desktop\Research\Data\ene_scan_laserX_microphoneY\iter_" + str(i) + ".tdms" for i in range(6)] # create a variable pointing to file (change Ryan Schlimme to ryans)
 
 import sys
 import matplotlib.pyplot as plt
@@ -21,7 +21,7 @@ from scipy.fft import rfft, rfftfreq, irfft
 from scipy.optimize import curve_fit
 import numpy as np
 
-sys.path.append(r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
+sys.path.append(r"C:\Users\ryans\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
 from time_series import CollectionTDMS								# pull function from time_series module
 from acoustic_entrainment import mic_response
 from brownian import logbin_func
@@ -32,6 +32,10 @@ N = list(range(6))
 def A(x, e, f, g, h):
 	A = e * x ** 3 + f * x ** 2 + g * x + h
 	return A
+
+def Response(f, k, t):				# From Diaci response paper
+	Response = k / (1 + t * f)
+	return Response
 
 def Phi(f, a, b, c):
 	Phi = a * f ** 2 + b * f + c
@@ -61,7 +65,7 @@ for n in N:
 	numrows = len(Mdata)
 	# print(divisors(numrows))
 
-	k = 5 	# number of rows in each average	
+	k = 1 	# number of rows in each average	
 
 # Initialize Dummy Paramters
 	kcopy = k
@@ -109,20 +113,20 @@ for n in N:
 ##### Transfer Function #####
 	H = avgLfft / avgMfft
 # Log Bin Averaging Freq/Amplitude/Phase
-	LogFreq = logbin_func(Lfreq, Npts = 20) #10-50
-	LogAmp = logbin_func(np.abs(H), Npts = 20) #10-50
-	LogPhi = logbin_func(np.angle(H), Npts = 20)
+	LogFreq = logbin_func(Lfreq, Npts = 30) #10-50
+	LogAmp = logbin_func(np.abs(H), Npts = 30) #10-50
+	LogPhi = logbin_func(np.angle(H), Npts = 30)
 	# LogAmpUncertainty = logbin_func(np.abs(H), Npts = 20, func = np.std)
 	ax0.loglog(LogFreq[1:], LogAmp[1:])
-	popt, pcov = curve_fit(A, LogFreq[1:], LogAmp[1:])
+	popt, pcov = curve_fit(Response, LogFreq[1:], LogAmp[1:])
 	# popt, pcov = curve_fit(A, LogFreq[1:], LogAmp[1:], sigma = LogAmpUncertainty[1:], absolute_sigma = True)
 	# print(popt)
 	# print(np.sqrt(np.diag(pcov)))
 	xvals = np.linspace(1e3, 2e5, 100000)
-	ax0.loglog(xvals, A(xvals, popt[0], popt[1], popt[2], popt[3]))
+	ax0.loglog(xvals, Response(xvals, popt[0], popt[1]))
 	ax0.set_title("Amplitude Fit")
-	ax1.plot(LogFreq[1:], LogPhi[1:])
+	ax1.semilogx(LogFreq[1:], LogPhi[1:])
 	popt, pcov = curve_fit(Phi, LogFreq[1:], LogPhi[1:])
-	ax1.plot(xvals, Phi(xvals, popt[0], popt[1], popt[2]))
+	ax1.semilogx(xvals, Phi(xvals, popt[0], popt[1], popt[2]))
 	ax1.set_title("Phase Fit")
 plt.show()
