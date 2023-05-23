@@ -1,28 +1,6 @@
 # 18 May 2023
 # Ryan Schlimme
 
-
-# Generate time domain curves for each pulse
-# 	Requires filering, nothing changes there (filtering step has a cutoff frequency parameter)
-#	Changing the cutoff frequency introduces more noise but allows us to resolve higher peak pressures
-# 	1 approach) apply("low pass", cutoff = fc, inplace = True)
-# 	2 approach) apply("bin_average", Npts = Neiquist criterion, inplace = True)
-# Algorithmically extract peak voltage, rms of noise before impulse
-# SNR(fc) = signal to noise ratio as a function of cutoff frequeny
-#	fc = 10k, 100k, ..., 1 M (maybe log spaced to put the SNR plot on a log space plot)
-# 	Do this for microphone, laser and for each energy (looping through)
-#	Since our traces are very small, likely include all pre impulse data for calculating RMS of noise
-#	Uncertainty of SNR as a function of time included in calculating RMS would expect some decrease as we increase time until a critical point where it starts to go back up
-# Plot SNR 
-#	Hoping to see a potential increase, then plummet as noise gets too large (for laser)
-#	SNR <= 1 (noise too high)
-# 	Potentially see if laser outperforms microphone for some frequency cutoff space (ideal)
-# In a single, un time domain averaged, calculated SNR
-# Then ensemble average SNR over all 100 shots
-# Also interesting to ensemble average just RMS and make a histogram
-# Potentially do this with and without mic calibration
-
-
 f_name_index = [r"C:\Users\ryans\OneDrive\Desktop\Research\Data\ene_scan_laserX_microphoneY\iter_" + str(i) + ".tdms" for i in range(6)] # create a variable pointing to file (change Ryan Schlimme to ryans)
 
 import sys

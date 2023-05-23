@@ -25,7 +25,7 @@ sys.path.append(r"C:\Users\ryans\OneDrive\Desktop\Research\brownian\src") 	# app
 from time_series import CollectionTDMS								# pull function from time_series module
 from acoustic_entrainment import mic_response
 from brownian import logbin_func
-from sympy import divisors
+import scipy
 
 N = list(range(6))
 
@@ -33,9 +33,8 @@ def A(x, e, f, g, h):
 	A = e * x ** 3 + f * x ** 2 + g * x + h
 	return A
 
-def Response(f, k, t):				# From Diaci response paper
-	Response = k / (1 + t * f)
-	return Response
+def NewResponse(s):		# From Diaci Paper
+	return -2/1.003*(0.06/341)*s*scipy.special.kn(1, 0.06/341*s)*np.exp(0.06/341*s)
 
 def Phi(f, a, b, c):
 	Phi = a * f ** 2 + b * f + c
@@ -52,8 +51,8 @@ for n in N:
 ##### Time Analysis to Compare Pulses ######
 	L.apply("detrend", mode = "linear", inplace = True)
 	M.apply("detrend", mode = "linear", inplace = True)
-	L.apply("time_gate", tmin = 2.8e-4, tmax = None, inplace = True)
-	M.apply("time_gate", tmin = 2.8e-4, tmax = None, inplace = True)
+	L.apply("time_gate", tmin = 2.8e-4, tmax = 3e-4, inplace = True)
+	M.apply("time_gate", tmin = 2.8e-4, tmax = 3e-4, inplace = True)
 	# M.apply("shift", tau = 0.0000235, inplace = True)
 	Npts = L.r / (2*200000)							# Bin_average to max frequency of 500 kHz
 	L.apply("bin_average", Npts = Npts, inplace = True)
@@ -65,7 +64,7 @@ for n in N:
 	numrows = len(Mdata)
 	# print(divisors(numrows))
 
-	k = 1 	# number of rows in each average	
+	k = 10 	# number of rows in each average	
 
 # Initialize Dummy Paramters
 	kcopy = k
@@ -113,17 +112,17 @@ for n in N:
 ##### Transfer Function #####
 	H = avgLfft / avgMfft
 # Log Bin Averaging Freq/Amplitude/Phase
-	LogFreq = logbin_func(Lfreq, Npts = 30) #10-50
-	LogAmp = logbin_func(np.abs(H), Npts = 30) #10-50
-	LogPhi = logbin_func(np.angle(H), Npts = 30)
+	LogFreq = logbin_func(Lfreq, Npts = 25) #10-50
+	LogAmp = logbin_func(np.abs(H), Npts = 25) #10-50
+	LogPhi = logbin_func(np.angle(H), Npts = 25)
 	# LogAmpUncertainty = logbin_func(np.abs(H), Npts = 20, func = np.std)
 	ax0.loglog(LogFreq[1:], LogAmp[1:])
-	popt, pcov = curve_fit(Response, LogFreq[1:], LogAmp[1:])
+	# popt, pcov = curve_fit(NewResponse, LogFreq[1:], LogAmp[1:])
 	# popt, pcov = curve_fit(A, LogFreq[1:], LogAmp[1:], sigma = LogAmpUncertainty[1:], absolute_sigma = True)
 	# print(popt)
 	# print(np.sqrt(np.diag(pcov)))
 	xvals = np.linspace(1e3, 2e5, 100000)
-	ax0.loglog(xvals, Response(xvals, popt[0], popt[1]))
+	ax0.loglog(xvals, NewResponse(xvals))
 	ax0.set_title("Amplitude Fit")
 	ax1.semilogx(LogFreq[1:], LogPhi[1:])
 	popt, pcov = curve_fit(Phi, LogFreq[1:], LogPhi[1:])
