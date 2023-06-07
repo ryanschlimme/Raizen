@@ -13,7 +13,7 @@
 # Using fit result H(f), correct laser voltage signal
 
 
-f_name_index = [r"C:\Users\ryans\OneDrive\Desktop\Research\Data\ene_scan_laserX_microphoneY\iter_" + str(i) + ".tdms" for i in range(6)] # create a variable pointing to file (change Ryan Schlimme to ryans)
+f_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\ene_scan_laserX_microphoneY\iter_" + str(i) + ".tdms" for i in range(6)] # create a variable pointing to file (change Ryan Schlimme to ryans)
 
 import sys
 import matplotlib.pyplot as plt
@@ -21,7 +21,7 @@ from scipy.fft import rfft, rfftfreq, irfft
 from scipy.optimize import curve_fit
 import numpy as np
 
-sys.path.append(r"C:\Users\ryans\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
+sys.path.append(r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
 from time_series import CollectionTDMS								# pull function from time_series module
 from acoustic_entrainment import mic_response
 from brownian import logbin_func
@@ -51,8 +51,8 @@ for n in N:
 ##### Time Analysis to Compare Pulses ######
 	L.apply("detrend", mode = "linear", inplace = True)
 	M.apply("detrend", mode = "linear", inplace = True)
-	L.apply("time_gate", tmin = 2.8e-4, tmax = 3e-4, inplace = True)
-	M.apply("time_gate", tmin = 2.8e-4, tmax = 3e-4, inplace = True)
+	L.apply("time_gate", tmin = 2.8e-4, tmax = 3.0e-4, inplace = True)
+	M.apply("time_gate", tmin = 2.8e-4, tmax = 3.0e-4, inplace = True)
 	# M.apply("shift", tau = 0.0000235, inplace = True)
 	Npts = L.r / (2*200000)							# Bin_average to max frequency of 500 kHz
 	L.apply("bin_average", Npts = Npts, inplace = True)

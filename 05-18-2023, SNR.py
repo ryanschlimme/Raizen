@@ -1,13 +1,13 @@
 # 18 May 2023
 # Ryan Schlimme
 
-f_name_index = [r"C:\Users\ryans\OneDrive\Desktop\Research\Data\ene_scan_laserX_microphoneY\iter_" + str(i) + ".tdms" for i in range(6)] # create a variable pointing to file (change Ryan Schlimme to ryans)
+f_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\ene_scan_laserX_microphoneY\iter_" + str(i) + ".tdms" for i in range(6)] # create a variable pointing to file (change Ryan Schlimme to ryans)
 
 import sys
 import matplotlib.pyplot as plt
 import numpy as np
 
-sys.path.append(r"C:\Users\ryans\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
+sys.path.append(r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
 from time_series import CollectionTDMS								# pull function from time_series module
 from acoustic_entrainment import mic_response
 from brownian import logbin_func
@@ -15,7 +15,9 @@ from brownian import logbin_func
 N = list(range(6))
 fc_list = list(range(10000, 1000000, 25000))
 
-for n in N:
+fig, axes = plt.subplots(1, 6, sharey = True)
+
+for n, ax in zip(N, axes.flatten()):
 # Using low pass filtering OR bin averaging w/ mic correction
 	f_name = f_name_index[n]	
 # Initialize dummy arrays for SNR results as a function of fc
@@ -49,10 +51,10 @@ for n in N:
 			Mmax_V.append(max(shot_micro.time_gate(tmin = 270e-6, tmax = 330e-6)[1]))
 			M_RMS.append(np.sqrt(np.mean(shot_micro.time_gate(tmin = 0, tmax = 270e-6)[1] ** 2)))
 		
-		for shot_laser, shot_micro in zip(L.collection[73:], M.collection[73:]):
-			Lmax_V.append(max(shot_laser.time_gate(tmin = 270e-6, tmax = 300e-6)[1]))
+		for shot_laser, shot_micro in zip(L.collection, M.collection):
+			Lmax_V.append(max(shot_laser.time_gate(tmin = 300e-6, tmax = None)[1]))
 			L_RMS.append(np.sqrt(np.mean(shot_laser.time_gate(tmin = 0, tmax = 270e-6)[1] ** 2)))
-			Mmax_V.append(max(shot_micro.time_gate(tmin = 270e-6, tmax = 330e-6)[1]))
+			Mmax_V.append(max(shot_micro.time_gate(tmin = 330e-6, tmax = None)[1]))
 			M_RMS.append(np.sqrt(np.mean(shot_micro.time_gate(tmin = 0, tmax = 270e-6)[1] ** 2)))
 # Calculating SNRmean and st dev = Lmax_V / L_RMS_array, standard deviation
 		L_SNR = np.mean(np.array(Lmax_V) / np.array(L_RMS))
@@ -65,15 +67,15 @@ for n in N:
 # Generate SNR(fc) plots
 	# np.linspace(10000, 
 	# np.geomspace(start, stop, npts) #Loglog scale 
-	plt.plot(fc_list, L_SNR_array, color = "r")
-	plt.plot(fc_list, M_SNR_array, color = "b")
+	ax.plot(fc_list, L_SNR_array, color = "r")
+	ax.plot(fc_list, M_SNR_array, color = "b")
 	plt.suptitle("Laser/Mic SNR Comparison")
 	string = "\n" + str(n + 14) + " J"
-	plt.title(string, fontsize = 9)
-	plt.xlabel("Cutoff Frequency ($fc$)")
-	plt.ylabel("Avg of (Max Signal / RMS of Noise)")
+	ax.set_title(string, fontsize = 9)
+	fig.supxlabel("Cutoff Frequency ($fc$)")
+	fig.supylabel("Avg of (Max Signal / RMS of Noise)")
 	plt.legend(["Laser SNR", "Mic SNR"], loc = "best")
-	plt.show()
+plt.show()
 	
 # Historgram Exploration
 	#fig, (ax0, ax1, ax2, ax3) = plt.subplots(1, 4)
