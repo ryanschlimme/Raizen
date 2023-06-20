@@ -16,7 +16,7 @@ from acoustic_entrainment import mic_response
 
 N = list(range(8))
 fig, axes = plt.subplots(1, 8, sharey = True)
-fc_list = list(np.geomspace(10000, 2500000, 20))
+fc_list = list(np.geomspace(10000, 3000000, 10))
 
 for n, ax in zip(N, axes.flatten()):
 # Using low pass filtering OR bin averaging w/ mic correction
@@ -52,10 +52,10 @@ for n, ax in zip(N, axes.flatten()):
 		M_RMS = []
 # Calculating RMS for each 
 		for shot_laser, shot_micro in zip(L.collection[2:], M.collection[2:]):
-			Lmax_V.append(max(shot_laser.time_gate(tmin = 360e-6, tmax = 400e-6)[1]))
-			L_RMS.append(np.sqrt(np.mean(shot_laser.time_gate(tmin = 200e-6, tmax = 300e-6)[1] ** 2)))
-			Mmax_V.append(max(shot_micro.time_gate(tmin = 360e-6, tmax = 400e-6)[1]))
-			M_RMS.append(np.sqrt(np.mean(shot_micro.time_gate(tmin = 200e-6, tmax = 300e-6)[1] ** 2)))
+			Lmax_V.append(max(shot_laser.time_gate(tmin = 360e-6, tmax = 420e-6)[1]))
+			L_RMS.append(np.sqrt(np.mean(shot_laser.time_gate(tmin = 300e-6, tmax = 360e-6)[1] ** 2)))
+			Mmax_V.append(max(shot_micro.time_gate(tmin = 360e-6, tmax = 420e-6)[1]))
+			M_RMS.append(np.sqrt(np.mean(shot_micro.time_gate(tmin = 300e-6, tmax = 360e-6)[1] ** 2)))
 # Calculating SNRmean and st dev = Lmax_V / L_RMS_array, standard deviation
 		L_SNR = np.mean(np.array(Lmax_V) / np.array(L_RMS))
 		M_SNR = np.mean(np.array(Mmax_V) / np.array(M_RMS))
@@ -65,13 +65,13 @@ for n, ax in zip(N, axes.flatten()):
 		Mmax_V_array = np.append(Mmax_V_array, np.mean(Mmax_V))
 		L_RMS_array = np.append(L_RMS_array, np.mean(L_RMS))
 		M_RMS_array = np.append(M_RMS_array, np.mean(M_RMS))
-	fig, (ax0, ax1) = plt.subplots(1,2)
-	ax0.plot(fc_list, Lmax_V_array)
-	ax0.plot(fc_list, Mmax_V_array)
-	ax1.plot(fc_list, L_RMS_array)
-	ax1.plot(fc_list, M_RMS_array)
-	ax0.legend(["Lmax", "Mmax"], loc = "best")
-	ax1.legend(["Lrms", "Mrms"], loc = "best")
+	# fig, (ax0, ax1) = plt.subplots(1,2)
+	# ax0.plot(fc_list, Lmax_V_array)
+	#ax0.plot(fc_list, Mmax_V_array)
+	#ax1.plot(fc_list, L_RMS_array)
+	#ax1.plot(fc_list, M_RMS_array)
+	#ax0.legend(["Lmax", "Mmax"], loc = "best")
+	#ax1.legend(["Lrms", "Mrms"], loc = "best")
 	L_SNR_std_array = np.append(L_SNR_std_array, np.std(np.array(Lmax_V) / np.array(L_RMS)))
 	M_SNR_std_array = np.append(M_SNR_std_array, np.std(np.array(Mmax_V) / np.array(M_RMS)))
 	
