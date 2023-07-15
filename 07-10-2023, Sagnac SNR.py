@@ -1,9 +1,10 @@
 # 10 July 2023
 # Ryan Schlimme
 
-# Comparing time domain laser pulses to calibrated microphone reading at energies scaling from 12 to 19 J in 1 J increments. Applying known calibration to microphone to transfer to pressure signal. All in Sagnac interferometer.
+# Comparing time domain laser pulses to calibrated microphone reading at energies scaling from 12 to 19 J in 1 J increments. Applying known calibration to microphone to transfer to pressure signal. All in Sagnac interferometer with telescope and balanced photodetection.
 
-f_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\Sagnac_500shot_ene_scan\iter_" + str(i) + ".tdms" for i in range(8)] # create a variable pointing to file (change Ryan Schlimme to ryans)
+f_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\Sagnac_tele_ene_scan_501shots\iter_" + str(i) + ".tdms" for i in range(8)] # create a variable pointing to file (change Ryan Schlimme to ryans)
+
 
 import sys
 import numpy as np
@@ -37,8 +38,8 @@ for n, ax in zip(N, axes.flatten()):
 		M.set_collection("Y")
 		L.apply("detrend", mode = "linear", inplace = True)
 		M.apply("detrend", mode = "linear", inplace = True)
-		L.apply("calibrate", cal = 1/0.002, inplace = True)
-		M.apply("shift", tau = -85e-6, inplace = True)
+		L.apply("calibrate", cal = -1/0.002, inplace = True)
+		M.apply("shift", tau = -90e-6, inplace = True)
 		M.apply("lowpass", cutoff = fc, inplace = True)
 		L.apply("lowpass", cutoff = fc, inplace = True)
 		Npts = L.r/ (2 * fc)			# Neiquist Criterion given cutoff frequency
