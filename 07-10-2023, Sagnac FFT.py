@@ -3,13 +3,13 @@
 
 # Generating Fourier spectra and signal to noise ratios at energies scaling from 12 to 19 J in 1 J increments. Applying known calibration to microphone to transfer to pressure signal. Applying qualitative calibration to laser to match troughs. All in Sagnac interferometer with telescope and balanced photodetection.
 
-f_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\Sagnac_tele_ene_scan_501shots\iter_" + str(i) + ".tdms" for i in range(8)] # create a variable pointing to file (change Ryan Schlimme to ryans)
+f_name_index = [r"C:\Users\ryans\OneDrive\Desktop\Research\Data\Sagnac_tele_ene_scan_501shots\iter_" + str(i) + ".tdms" for i in range(8)] # create a variable pointing to file (change Ryan Schlimme to ryans)
 
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-sys.path.append(r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
+sys.path.append(r"C:\Users\ryans\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
 from time_series import CollectionTDMS
 from acoustic_entrainment import mic_response						
 
@@ -24,7 +24,7 @@ for n in N:
 	M.set_collection("Y")
 	L.apply("detrend", mode = "linear", inplace = True)
 	M.apply("detrend", mode = "linear", inplace = True)
-	L.apply("calibrate", cal = -1/0.002, inplace = True)
+	L.apply("calibrate", cal = -1/0.001, inplace = True)
 	M.apply("shift", tau = -90e-6, inplace = True)
 	#M.apply("lowpass", cutoff = 2.5e6, inplace = True)
 	#L.apply("lowpass", cutoff = 2.5e6, inplace = True)
