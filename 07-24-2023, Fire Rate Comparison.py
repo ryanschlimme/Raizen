@@ -44,7 +44,7 @@ for n in N:
 	#L.agg.plot(tmin=450e-6, tmax = 500e-6, ax = ax, c = "r", tunit = "us")
 	#M.aggrigate(collection_slice = slice(1, 501, 1))
 	#M.agg.plot(tmin=450e-6, tmax = 500e-6, ax = ax, c = "b", tunit = "us")
-	for i in list(range(3, 4)):
+	for i in list(range(4, 10)):
 		Li = L.collection[i]
 		Mi = M.collection[i]
 		Li.plot(tmin = 440e-6, tmax = 500e-6, ax = ax, c = "r", tunit = "us")
@@ -71,7 +71,7 @@ for n in N:
 	#L.agg.plot(tmin=450e-6, tmax = 500e-6, ax = ax, c = "r", tunit = "us")
 	#M.aggrigate(collection_slice = slice(1, 501, 1))
 	#M.agg.plot(tmin=450e-6, tmax = 500e-6, ax = ax, c = "b", tunit = "us")
-	for i in list(range(3, 4)):
+	for i in list(range(3,4)):
 		Li = L.collection[i]
 		Mi = M.collection[i]
 		Li.plot(tmin = 440e-6, tmax = 500e-6, ax = ax, c = "b", tunit = "us")
