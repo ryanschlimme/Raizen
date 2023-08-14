@@ -19,10 +19,10 @@ from acoustic_entrainment import mic_response
 
 fig, ax = plt.subplots(1,1)
 
-M_cutoff = 200e3
-Sagnac_cutoff = 1e6
-BPD_cutoff = 1e6
-PD_cutoff = 1e6
+M_cutoff = 3e6
+Sagnac_cutoff = 3e6
+BPD_cutoff = 3e6
+PD_cutoff = 3e6
 
 M_SNR = []	# Mic
 Sagnac_SNR = []	# Sagnac
@@ -46,17 +46,17 @@ for n in Sagnac_name_index:
 	M.apply("bin_average", Npts = M_Npts, inplace = True)
 	M.apply("correct", response = mic_response, recollect = True) 	# Calibration of microphone
 	# M.apply("calibrate", cal = 1/0.00068, inplace = True)
-	for i in list(range(1, 11)):
+	L_maxV = []
+	L_RMS = []
+	M_maxV = []
+	M_RMS = []
+	for i in list(range(1, 51)):
 		Li = L.collection[i]
 		Mi = M.collection[i]
-		L_maxV = []
-		L_RMS = []
-		M_maxV = []
-		M_RMS = []
 		L_maxV.append(max(Li.time_gate(tmin = 420e-6, tmax = 470e-6)[1]))
-		L_RMS.append(np.sqrt(np.mean(Li.time_gate(tmin = 370e-6, tmax = 420e-6)[1] **  2)))
+		L_RMS.append(np.sqrt(np.mean(Li.time_gate(tmin = 170e-6, tmax = 420e-6)[1] **  2)))
 		M_maxV.append(max(Mi.time_gate(tmin = 420e-6, tmax = 470e-6)[1]))
-		M_RMS.append(np.sqrt(np.mean(Mi.time_gate(tmin = 370e-6, tmax = 420e-6)[1] **  2)))
+		M_RMS.append(np.sqrt(np.mean(Mi.time_gate(tmin = 170e-6, tmax = 420e-6)[1] **  2)))
 	Sagnac_SNR.append(np.mean(np.array(L_maxV) / np.array(L_RMS)))
 	M_SNR.append(np.mean(np.array(M_maxV) / np.array(M_RMS)))
 
@@ -68,10 +68,10 @@ for n in BPD_name_index:
 	L.apply("lowpass", cutoff = BPD_cutoff, inplace = True)
 	L_Npts = L.r/ (2 * BPD_cutoff)
 	L.apply("bin_average", Npts = L_Npts, inplace = True)
-	for i in list(range(1, 11)):
+	L_maxV = []
+	L_RMS = []
+	for i in list(range(1, 51)):
 		Li = L.collection[i]
-		L_maxV = []
-		L_RMS = []
 		L_maxV.append(max(Li.time_gate(tmin = 420e-6, tmax = 470e-6)[1]))
 		L_RMS.append(np.sqrt(np.mean(Li.time_gate(tmin = 370e-6, tmax = 420e-6)[1] **  2)))
 	BPD_SNR.append(np.mean(np.array(L_maxV) / np.array(L_RMS)))
@@ -84,10 +84,10 @@ for n in PD_name_index:
 	L.apply("lowpass", cutoff = PD_cutoff, inplace = True)
 	L_Npts = L.r/ (2 * PD_cutoff)
 	L.apply("bin_average", Npts = L_Npts, inplace = True)
-	for i in list(range(1, 11)):
+	L_maxV = []
+	L_RMS = []
+	for i in list(range(1, 51)):
 		Li = L.collection[i]
-		L_maxV = []
-		L_RMS = []
 		L_maxV.append(max(Li.time_gate(tmin = 420e-6, tmax = 470e-6)[1]))
 		L_RMS.append(np.sqrt(np.mean(Li.time_gate(tmin = 370e-6, tmax = 420e-6)[1] **  2)))
 	PD_SNR.append(np.mean(np.array(L_maxV) / np.array(L_RMS)))
@@ -98,8 +98,8 @@ ax.plot(I, PD_SNR)
 ax.plot(I, M_SNR, color = "b")
 plt.xlabel("Phi")
 plt.ylabel("SNR (Max V / RMS Noise)")
-plt.axhline(y=1, color = "black")
-plt.legend(["Sagnac", "BPD", "Tele", "Mic", "SNR = 1"])
+plt.axhline(y=3.55, color = "black")
+plt.legend(["Sagnac", "BPD", "Tele", "Mic", "SNR = 3.55"])
 plt.show()
 
 	

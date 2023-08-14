@@ -13,7 +13,7 @@ from acoustic_entrainment import mic_response
 from brownian import logbin_func
 
 N = list(range(6))
-fc_list = list(range(10000, 1000000, 25000))
+fc_list = list(range(10000, 1000000, 25))
 
 fig, axes = plt.subplots(1, 6, sharey = True)
 
