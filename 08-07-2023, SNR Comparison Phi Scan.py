@@ -5,9 +5,9 @@
 
 I = [145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160]
 
-Sagnac_name_index = [r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Sagnac\MinDetect\phi" + str(i) + ".tdms" for i in I]
-BPD_name_index = [r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\SplitBeam\MinDetect\phi" + str(i) + ".tdms" for i in I]
-PD_name_index = [r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Telescope\MinDetect\phi" + str(i) + ".tdms" for i in I]
+Sagnac_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Sagnac\MinDetect\phi" + str(i) + ".tdms" for i in I]
+BPD_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\SplitBeam\MinDetect\phi" + str(i) + ".tdms" for i in I]
+PD_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Telescope\MinDetect\phi" + str(i) + ".tdms" for i in I]
 
 import sys
 import numpy as np
@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 from scipy.special import erfinv
 from joblib import Parallel, delayed
 
-sys.path.append(r"C:\Users\ryans\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
+sys.path.append(r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
 from time_series import CollectionTDMS
 from acoustic_entrainment import mic_response
 
@@ -43,9 +43,12 @@ def local_detrend(col, tmin = None, tmax = None, inplace = False) -> None:
 			c.x = c.x - (m * c.t) - b
 	return None
 
+# Change SNR = 1 black line to band using std_max. Need to think about what to cut the band at!!!!!
+
+
 
 fig, axes = plt.subplots(4, 4, sharex = True, sharey = "row")
-fc_list = list(np.linspace(20000, 2500000, 25))
+fc_list = list(np.linspace(20000, 2500000, 100))
 
 Iteration = [c for c in range(len(I))]
 	
@@ -59,15 +62,15 @@ def Sagnac_loop(z):
 		#L.apply("detrend", mode = "linear", inplace = True)
 		L.apply("calibrate", cal = -1/0.00044, inplace = True)
 		L.apply("lowpass", cutoff = fc, inplace = True)
-		Npts = L.r/ (2 * fc)			# Neiquist Criterion given cutoff frequency
+		Npts = int(L.r/ (2 * fc))			# Nyquist Criterion given cutoff frequency
 		L.apply("bin_average", Npts = Npts, inplace = True)
 		L_maxV = []
 		L_RMS = []
 		for i in list(range(1, 51)):
 			Li = L.collection[i]
 			L_maxV.append(max(Li.time_gate(tmin = 400e-6, tmax = 470e-6)[1]))
-			L_RMS.append(np.std(Li.time_gate(tmin = 170e-6, tmax = 400e-6)[1]))
-		Sagnac_SNR_inter.append(np.mean(np.array(L_maxV) / np.array(L_RMS) / expected_max(len(Li.time_gate(tmin = 170e-6, tmax = 400e-6)[1]))))
+			L_RMS.append(np.std(Li.time_gate(tmin = 170e-6, tmax = 350e-6)[1]))
+		Sagnac_SNR_inter.append(np.mean(np.array(L_maxV) / np.array(L_RMS) / expected_max(len(Li.time_gate(tmin = 170e-6, tmax = 350e-6)[1]))))
 	return Sagnac_SNR_inter
 
 def M_loop(z):
@@ -80,7 +83,7 @@ def M_loop(z):
 		#M.apply("detrend", mode = "linear", inplace = True)
 		M.apply("shift", tau = -19.5e-6, inplace = True)
 		M.apply("lowpass", cutoff = fc, inplace = True)
-		Npts = M.r/ (2 * fc)			# Neiquist Criterion given cutoff frequency
+		Npts = int(M.r/ (2 * fc))			# Nyquist Criterion given cutoff frequency
 		M.apply("bin_average", Npts = Npts, inplace = True)
 		M.apply("correct", response = mic_response, recollect = True) 	# Calibration of microphone
 		M_maxV = []
@@ -88,8 +91,8 @@ def M_loop(z):
 		for i in list(range(1, 51)):
 			Mi = M.collection[i]
 			M_maxV.append(max(Mi.time_gate(tmin = 400e-6, tmax = 470e-6)[1]))
-			M_RMS.append(np.std(Mi.time_gate(tmin = 170e-6, tmax = 400e-6)[1]))
-		M_SNR_inter.append(np.mean(np.array(M_maxV) / np.array(M_RMS) / expected_max(len(Mi.time_gate(tmin = 170e-6, tmax = 400e-6)[1]))))
+			M_RMS.append(np.std(Mi.time_gate(tmin = 170e-6, tmax = 350e-6)[1]))
+		M_SNR_inter.append(np.mean(np.array(M_maxV) / np.array(M_RMS) / expected_max(len(Mi.time_gate(tmin = 170e-6, tmax = 350e-6)[1]))))
 	return M_SNR_inter
 
 def BPD_loop(z):
@@ -102,15 +105,15 @@ def BPD_loop(z):
 		#L.apply("detrend", mode = "linear", inplace = True)
 		L.apply("calibrate", cal = 1/0.0002, inplace = True)
 		L.apply("lowpass", cutoff = fc, inplace = True)
-		Npts = L.r/ (2 * fc)			# Neiquist Criterion given cutoff frequency
+		Npts = int(L.r/ (2 * fc))			# Neiquist Criterion given cutoff frequency
 		L.apply("bin_average", Npts = Npts, inplace = True)
 		L_maxV = []
 		L_RMS = []
 		for i in list(range(1, 51)):
 			Li = L.collection[i]
 			L_maxV.append(max(Li.time_gate(tmin = 400e-6, tmax = 470e-6)[1]))
-			L_RMS.append(np.std(Li.time_gate(tmin = 170e-6, tmax = 400e-6)[1]))
-		BPD_SNR_inter.append(np.mean(np.array(L_maxV) / np.array(L_RMS) / expected_max(len(Li.time_gate(tmin = 170e-6, tmax = 400e-6)[1]))))
+			L_RMS.append(np.std(Li.time_gate(tmin = 170e-6, tmax = 350e-6)[1]))
+		BPD_SNR_inter.append(np.mean(np.array(L_maxV) / np.array(L_RMS) / expected_max(len(Li.time_gate(tmin = 170e-6, tmax = 350e-6)[1]))))
 	return BPD_SNR_inter
 
 
@@ -124,15 +127,15 @@ def PD_loop(z):
 		#L.apply("detrend", mode = "linear", inplace = True)
 		L.apply("calibrate", cal = -1/0.00000024, inplace = True)
 		L.apply("lowpass", cutoff = fc, inplace = True)
-		Npts = L.r/ (2 * fc)			# Neiquist Criterion given cutoff frequency
+		Npts = int(L.r/ (2 * fc))			# Neiquist Criterion given cutoff frequency
 		L.apply("bin_average", Npts = Npts, inplace = True)
 		L_maxV = []
 		L_RMS = []
 		for i in list(range(1, 51)):
 			Li = L.collection[i]
 			L_maxV.append(max(Li.time_gate(tmin = 400e-6, tmax = 470e-6)[1]))
-			L_RMS.append(np.std(Li.time_gate(tmin = 170e-6, tmax = 400e-6)[1]))
-		PD_SNR_inter.append(np.mean(np.array(L_maxV) / np.array(L_RMS) / expected_max(len(Li.time_gate(tmin = 170e-6, tmax = 400e-6)[1]))))
+			L_RMS.append(np.std(Li.time_gate(tmin = 170e-6, tmax = 350e-6)[1]))
+		PD_SNR_inter.append(np.mean(np.array(L_maxV) / np.array(L_RMS) / expected_max(len(Li.time_gate(tmin = 170e-6, tmax = 350e-6)[1]))))
 	return PD_SNR_inter
 
 Sagnac_SNR = Parallel(n_jobs = -1)(delayed(Sagnac_loop)(i) for i in Iteration)

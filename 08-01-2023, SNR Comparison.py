@@ -3,20 +3,20 @@
 
 # Investigating signal to noise ratio of four acoustic measurement systems.
 
-Sagnac_name = r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Sagnac\iter_0.tdms"
-BPD_name = r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\SplitBeam\iter_0.tdms"
-PD_name = r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Telescope\iter_0.tdms"
+Sagnac_name = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Sagnac\iter_0.tdms"
+BPD_name = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\SplitBeam\iter_0.tdms"
+PD_name = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Telescope\iter_0.tdms"
 
-#Sagnac_name = r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Sagnac\MinDetect\phi145.tdms"
-#BPD_name = r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\SplitBeam\MinDetect\phi145.tdms"
-#PD_name = r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Telescope\MinDetect\phi145.tdms"
+#Sagnac_name = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Sagnac\MinDetect\phi145.tdms"
+#BPD_name = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\SplitBeam\MinDetect\phi145.tdms"
+#PD_name = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Telescope\MinDetect\phi145.tdms"
 
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.special import erfinv
 
-sys.path.append(r"C:\Users\ryans\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
+sys.path.append(r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
 from time_series import CollectionTDMS
 from acoustic_entrainment import mic_response
 
@@ -67,14 +67,14 @@ for fc in fc_list:
 	L.apply("calibrate", cal = -1/0.00044, inplace = True)
 	L.apply("lowpass", cutoff = fc, inplace = True)
 	Npts = L.r/ (2 * fc)			# Neiquist Criterion given cutoff frequency
-	L.apply("bin_average", Npts = Npts, inplace = True)
+	L.apply("bin_average", Npts = int(Npts), inplace = True)
 	L_maxV = []
 	L_RMS = []
 	for i in list(range(1, 51)):
 		Li = L.collection[i]
 		L_maxV.append(max(Li.time_gate(tmin = 400e-6, tmax = 470e-6)[1]))
 		L_RMS.append(np.std(Li.time_gate(tmin = 170e-6, tmax = 400e-6)[1]))
-	Sagnac_SNR.append(np.mean(np.array(L_maxV) / np.array(L_RMS) / expected_max(len(Li.time_gate(tmin = 170e-6, tmax = 400e-6)[1])))
+	Sagnac_SNR.append(np.mean(np.array(L_maxV) / np.array(L_RMS) / expected_max(len(Li.time_gate(tmin = 170e-6, tmax = 400e-6)[1]))))
 
 for fc in fc_list:
 	M = CollectionTDMS(Sagnac_name)
@@ -84,7 +84,7 @@ for fc in fc_list:
 	M.apply("shift", tau = -19.5e-6, inplace = True)
 	M.apply("lowpass", cutoff = fc, inplace = True)
 	Npts = M.r/ (2 * fc)			# Neiquist Criterion given cutoff frequency
-	M.apply("bin_average", Npts = Npts, inplace = True)
+	M.apply("bin_average", Npts = int(Npts), inplace = True)
 	M.apply("correct", response = mic_response, recollect = True) 	# Calibration of microphone
 	M_maxV = []
 	M_RMS = []
@@ -102,7 +102,7 @@ for fc in fc_list:
 	L.apply("calibrate", cal = 1/0.0002, inplace = True)
 	L.apply("lowpass", cutoff = fc, inplace = True)
 	Npts = L.r/ (2 * fc)			# Neiquist Criterion given cutoff frequency
-	L.apply("bin_average", Npts = Npts, inplace = True)
+	L.apply("bin_average", Npts = int(Npts), inplace = True)
 	L_maxV = []
 	L_RMS = []
 	for i in list(range(1, 51)):
@@ -119,7 +119,7 @@ for fc in fc_list:
 	L.apply("calibrate", cal = -1/0.00000024, inplace = True)
 	L.apply("lowpass", cutoff = fc, inplace = True)
 	Npts = L.r/ (2 * fc)			# Neiquist Criterion given cutoff frequency
-	L.apply("bin_average", Npts = Npts, inplace = True)
+	L.apply("bin_average", Npts = int(Npts), inplace = True)
 	L_maxV = []
 	L_RMS = []
 	for i in list(range(1, 51)):
