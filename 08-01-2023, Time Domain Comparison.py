@@ -59,14 +59,14 @@ for n in N:
 	M.apply("shift", tau = -19.5e-6, inplace = True)
 	M.apply("lowpass", cutoff = M_cutoff, inplace = True)
 	L.apply("lowpass", cutoff = L_cutoff, inplace = True)
-	M_Npts = L.r/ (2 * M_cutoff)			# Neiquist Criterion given cutoff frequency
-	L_Npts = L.r/ (2 * L_cutoff)
+	M_Npts = int(L.r/ (2 * M_cutoff))			# Neiquist Criterion given cutoff frequency
+	L_Npts = int(L.r/ (2 * L_cutoff))
 	L.apply("bin_average", Npts = L_Npts, inplace = True)
 	M.apply("bin_average", Npts = M_Npts, inplace = True)
 	M.apply("correct", response = mic_response, recollect = True) 	# Calibration of microphone
 	# M.apply("calibrate", cal = 1/0.00068, inplace = True)
 	L.aggrigate(collection_slice = slice(2, 500, 1))
-	L.agg.plot(tmin=170e-6, tmax = 470e-6, ax = ax, tunit = "us")
+	L.agg.plot(tmin=170e-6, tmax = 470e-6, ax = ax)
 	M.aggrigate(collection_slice = slice(2, 500, 1))
 	#M.agg.plot(tmin=170e-6, tmax = 470e-6, ax = ax, c = "b", tunit = "us")
 	for i in list(range(1, 51)):
@@ -82,7 +82,7 @@ for n in N:
 	local_detrend(L, tmin = 170e-6, tmax = 400e-6, inplace = True)
 	L.apply("calibrate", cal = 1/0.0002, inplace = True)
 	L.apply("lowpass", cutoff = L_cutoff, inplace = True)
-	L_Npts = L.r/ (2 * L_cutoff)
+	L_Npts = int(L.r/ (2 * L_cutoff))
 	L.apply("bin_average", Npts = L_Npts, inplace = True)
 	L.aggrigate(collection_slice = slice(2, 500, 1))
 	#L.agg.plot(tmin=170e-6, tmax = 470e-6, ax = ax, tunit = "us")
@@ -99,7 +99,7 @@ for n in N:
 	local_detrend(L, tmin = 170e-6, tmax = 400e-6, inplace = True)
 	L.apply("calibrate", cal = -1/0.0000002, inplace = True)	
 	L.apply("lowpass", cutoff = L_cutoff, inplace = True)
-	L_Npts = L.r/ (2 * L_cutoff)
+	L_Npts = int(L.r/ (2 * L_cutoff))
 	L.apply("bin_average", Npts = L_Npts, inplace = True)
 	L.aggrigate(collection_slice = slice(2, 500, 1))
 	#L.agg.plot(tmin=170e-6, tmax = 470e-6, ax = ax, tunit = "us")

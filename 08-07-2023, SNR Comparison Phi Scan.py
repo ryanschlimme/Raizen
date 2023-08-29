@@ -3,11 +3,12 @@
 
 # Investigating signal to noise ratio of four acoustic measurement systems with various signal strengths using parallel processing.
 
+#I = [145]
 I = [145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160]
 
-Sagnac_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Sagnac\MinDetect\phi" + str(i) + ".tdms" for i in I]
-BPD_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\SplitBeam\MinDetect\phi" + str(i) + ".tdms" for i in I]
-PD_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Telescope\MinDetect\phi" + str(i) + ".tdms" for i in I]
+Sagnac_name_index = [r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Sagnac\MinDetect\phi" + str(i) + ".tdms" for i in I]
+BPD_name_index = [r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\SplitBeam\MinDetect\phi" + str(i) + ".tdms" for i in I]
+PD_name_index = [r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Telescope\MinDetect\phi" + str(i) + ".tdms" for i in I]
 
 import sys
 import numpy as np
@@ -15,7 +16,7 @@ import matplotlib.pyplot as plt
 from scipy.special import erfinv
 from joblib import Parallel, delayed
 
-sys.path.append(r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
+sys.path.append(r"C:\Users\ryans\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
 from time_series import CollectionTDMS
 from acoustic_entrainment import mic_response
 
@@ -33,7 +34,6 @@ def std_max(N):
     sigman = Phi(1-1/(N*np.e)) - mun
     return sigman*np.pi*np.sqrt(1/6)
 
-
 def local_detrend(col, tmin = None, tmax = None, inplace = False) -> None:
 	for c in col.collection:
 		t, x = c.time_gate(tmin = tmin, tmax = tmax)
@@ -43,35 +43,38 @@ def local_detrend(col, tmin = None, tmax = None, inplace = False) -> None:
 			c.x = c.x - (m * c.t) - b
 	return None
 
-# Change SNR = 1 black line to band using std_max. Need to think about what to cut the band at!!!!!
+mu = 0
 
-
-
-fig, axes = plt.subplots(4, 4, sharex = True, sharey = "row")
-fc_list = list(np.linspace(20000, 2500000, 100))
+fig, axes = plt.subplots(4, 4, sharex = True)
+fc_list = list(np.linspace(20000, 2500000, 20))
 
 Iteration = [c for c in range(len(I))]
 	
-def Sagnac_loop(z):
-	Sagnac_name = Sagnac_name_index[z]
-	Sagnac_SNR_inter = []
+def Sagnac2(z, fc, tmin = 170e-6, tmax = 400e-6, cal = -1/0.00044):
+	Sagnac_name = r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Sagnac\MinDetect\phi" + str(z) + ".tdms"
+	L = CollectionTDMS(Sagnac_name)
+	L.set_collection("X")
+	local_detrend(L, tmin = tmin, tmax = tmax, inplace = True)
+	#L.apply("detrend", mode = "linear", inplace = True)
+	L.apply("calibrate", cal = cal, inplace = True)
+	L.apply("lowpass", cutoff = fc, inplace = True)
+	Npts = int(L.r/ (2 * fc))			# Nyquist Criterion given cutoff frequency
+	L.apply("bin_average", Npts = Npts, inplace = True)
+	L_maxV = []
+	L_RMS = []
+	for i in list(range(1, 51)):
+		Li = L.collection[i]
+		L_maxV.append(max(Li.time_gate(tmin = 400e-6, tmax = 470e-6)[1]))
+		L_RMS.append(np.std(Li.time_gate(tmin = 170e-6, tmax = 350e-6)[1]))
+	SNR = np.mean(np.array(L_maxV) / np.array(L_RMS) / expected_max(len(Li.time_gate(tmin = 170e-6, tmax = 350e-6)[1])))
+	STD = std_max(len(Li.time_gate(tmin = 170e-6, tmax = 350e-6)[1])) / expected_max(len(Li.time_gate(tmin = 170e-6, tmax = 350e-6)[1]))
+	return SNR, STD
+
+args = []
+
+for i in I:
 	for fc in fc_list:
-		L = CollectionTDMS(Sagnac_name)
-		L.set_collection("X")
-		local_detrend(L, tmin = 170e-6, tmax = 400e-6, inplace = True)
-		#L.apply("detrend", mode = "linear", inplace = True)
-		L.apply("calibrate", cal = -1/0.00044, inplace = True)
-		L.apply("lowpass", cutoff = fc, inplace = True)
-		Npts = int(L.r/ (2 * fc))			# Nyquist Criterion given cutoff frequency
-		L.apply("bin_average", Npts = Npts, inplace = True)
-		L_maxV = []
-		L_RMS = []
-		for i in list(range(1, 51)):
-			Li = L.collection[i]
-			L_maxV.append(max(Li.time_gate(tmin = 400e-6, tmax = 470e-6)[1]))
-			L_RMS.append(np.std(Li.time_gate(tmin = 170e-6, tmax = 350e-6)[1]))
-		Sagnac_SNR_inter.append(np.mean(np.array(L_maxV) / np.array(L_RMS) / expected_max(len(Li.time_gate(tmin = 170e-6, tmax = 350e-6)[1]))))
-	return Sagnac_SNR_inter
+		args.append((i, fc))
 
 def M_loop(z):
 	Sagnac_name = Sagnac_name_index[z]
@@ -116,7 +119,6 @@ def BPD_loop(z):
 		BPD_SNR_inter.append(np.mean(np.array(L_maxV) / np.array(L_RMS) / expected_max(len(Li.time_gate(tmin = 170e-6, tmax = 350e-6)[1]))))
 	return BPD_SNR_inter
 
-
 def PD_loop(z):
 	PD_name = PD_name_index[z]
 	PD_SNR_inter = []
@@ -138,23 +140,30 @@ def PD_loop(z):
 		PD_SNR_inter.append(np.mean(np.array(L_maxV) / np.array(L_RMS) / expected_max(len(Li.time_gate(tmin = 170e-6, tmax = 350e-6)[1]))))
 	return PD_SNR_inter
 
-Sagnac_SNR = Parallel(n_jobs = -1)(delayed(Sagnac_loop)(i) for i in Iteration)
+SagnacSNRSTDlist = np.array(Parallel(n_jobs = -1)(delayed(Sagnac2)(*arg) for arg in args))
+SagnacSNRSTDlist = SagnacSNRSTDlist.reshape(len(I), len(fc_list), 2)
 M_SNR = Parallel(n_jobs = -1)(delayed(M_loop)(i) for i in Iteration)
 BPD_SNR = Parallel(n_jobs = -1)(delayed(BPD_loop)(i) for i in Iteration)
 PD_SNR = Parallel(n_jobs = -1)(delayed(PD_loop)(i) for i in Iteration)
 
+for i, z in enumerate(I):
+	ax = axes.flatten()[i]
+	ax.plot(fc_list, SagnacSNRSTDlist[i, :, 0], label = "Sagnac")
+	d1 = SagnacSNRSTDlist[i, :, 1]
+	ones = np.ones_like(d1)
+	#ax.errorbar(fc_list, ones, yerr = d1)
+	ax.fill_between(fc_list, ones - d1, ones + d1, color = "k", alpha = 0.4)
+
 for z, ax, i in zip(Iteration, axes.flatten(), I):
-	ax.plot(fc_list, Sagnac_SNR[z])
-	ax.plot(fc_list, BPD_SNR[z])
-	ax.plot(fc_list, PD_SNR[z])
-	ax.plot(fc_list, M_SNR[z])
-	ax.axhline(y=1, color = "black")
+	ax.plot(fc_list, BPD_SNR[z], label = "BPD")
+	ax.plot(fc_list, PD_SNR[z], label = "PD")
+	ax.plot(fc_list, M_SNR[z], label = "Mic")
 	ax.set_title("Phi: " + str(i))
 
 #plt.xlabel("Frequency Cutoff (fc)")
 #plt.ylabel("SNR (Max V / St Dev Noise)")
 
-plt.legend(["Sagnac", "BPD", "Tele", "Mic", "SNR = 1"])
+plt.legend()
 
 plt.suptitle("SNR Comparison of Four Methods")
 #plt.title("Flash Lamp Energy: 19 J", fontsize = 9)
