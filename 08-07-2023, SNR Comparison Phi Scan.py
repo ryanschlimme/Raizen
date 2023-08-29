@@ -6,9 +6,9 @@
 #I = [145]
 I = [145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160]
 
-Sagnac_name_index = [r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Sagnac\MinDetect\phi" + str(i) + ".tdms" for i in I]
-BPD_name_index = [r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\SplitBeam\MinDetect\phi" + str(i) + ".tdms" for i in I]
-PD_name_index = [r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Telescope\MinDetect\phi" + str(i) + ".tdms" for i in I]
+Sagnac_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Sagnac\MinDetect\phi" + str(i) + ".tdms" for i in I]
+BPD_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\SplitBeam\MinDetect\phi" + str(i) + ".tdms" for i in I]
+PD_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Telescope\MinDetect\phi" + str(i) + ".tdms" for i in I]
 
 import sys
 import numpy as np
@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 from scipy.special import erfinv
 from joblib import Parallel, delayed
 
-sys.path.append(r"C:\Users\ryans\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
+sys.path.append(r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\brownian\src") 
 from time_series import CollectionTDMS
 from acoustic_entrainment import mic_response
 
@@ -46,12 +46,12 @@ def local_detrend(col, tmin = None, tmax = None, inplace = False) -> None:
 mu = 0
 
 fig, axes = plt.subplots(4, 4, sharex = True)
-fc_list = list(np.linspace(20000, 2500000, 20))
+fc_list = list(np.linspace(20000, 2500000, 50))
 
 Iteration = [c for c in range(len(I))]
 	
 def Sagnac2(z, fc, tmin = 170e-6, tmax = 400e-6, cal = -1/0.00044):
-	Sagnac_name = r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Sagnac\MinDetect\phi" + str(z) + ".tdms"
+	Sagnac_name = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Sagnac\MinDetect\phi" + str(z) + ".tdms"
 	L = CollectionTDMS(Sagnac_name)
 	L.set_collection("X")
 	local_detrend(L, tmin = tmin, tmax = tmax, inplace = True)
@@ -146,6 +146,11 @@ M_SNR = Parallel(n_jobs = -1)(delayed(M_loop)(i) for i in Iteration)
 BPD_SNR = Parallel(n_jobs = -1)(delayed(BPD_loop)(i) for i in Iteration)
 PD_SNR = Parallel(n_jobs = -1)(delayed(PD_loop)(i) for i in Iteration)
 
+print("Max Sagnac", max(SagnacSNRSTDlist[0,:,0]))
+print("Max BPD", max(BPD_SNR[0]))
+print("Max Mic", max(M_SNR[0]))
+print("Max PD", max(PD_SNR[0]))
+
 for i, z in enumerate(I):
 	ax = axes.flatten()[i]
 	ax.plot(fc_list, SagnacSNRSTDlist[i, :, 0], label = "Sagnac")
@@ -163,7 +168,7 @@ for z, ax, i in zip(Iteration, axes.flatten(), I):
 #plt.xlabel("Frequency Cutoff (fc)")
 #plt.ylabel("SNR (Max V / St Dev Noise)")
 
-plt.legend()
+ax.legend()
 
 plt.suptitle("SNR Comparison of Four Methods")
 #plt.title("Flash Lamp Energy: 19 J", fontsize = 9)
