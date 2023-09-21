@@ -3,15 +3,15 @@
 
 # Comparing time domain laser pulses to calibrated microphone reading at 19 J. Applying known calibration to microphone to transfer to pressure signal. All in Sagnac interferometer with telescope and balanced photodetection. Attempt 2 to correct for potential misfire
 
-Sagnac_name = r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Sagnac\iter_0.tdms"
-BPD_name = r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\SplitBeam\iter_0.tdms"
-PD_name = r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Telescope\iter_0.tdms"
+Sagnac_name = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Sagnac\iter_0.tdms"
+BPD_name = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\SplitBeam\iter_0.tdms"
+PD_name = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Telescope\iter_0.tdms"
 
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-sys.path.append(r"C:\Users\ryans\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
+sys.path.append(r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
 from time_series import CollectionTDMS
 from acoustic_entrainment import mic_response						
 
@@ -46,6 +46,7 @@ fig, ax = plt.subplots(1,1, sharey = True, sharex = True)
 M_cutoff = 1e6
 L_cutoff = 1e6
 
+size = (3.375, 2.5)
 
 for n in N:
 # Using low pass filtering AND bin averaging w/ mic correction
@@ -66,9 +67,9 @@ for n in N:
 	M.apply("correct", response = mic_response, recollect = True) 	# Calibration of microphone
 	# M.apply("calibrate", cal = 1/0.00068, inplace = True)
 	L.aggrigate(collection_slice = slice(2, 500, 1))
-	L.agg.plot(tmin=170e-6, tmax = 470e-6, ax = ax)
+	L.agg.plot(tmin=400e-6, tmax = 470e-6, ax = ax, figsize = size, tunit = "us")
 	M.aggrigate(collection_slice = slice(2, 500, 1))
-	#M.agg.plot(tmin=170e-6, tmax = 470e-6, ax = ax, c = "b", tunit = "us")
+	M.agg.plot(tmin=400e-6, tmax = 470e-6, ax = ax, figsize = size, c = "b", tunit = "us")
 	for i in list(range(1, 51)):
 		Li = L.collection[i]
 		Mi = M.collection[i]
@@ -85,7 +86,7 @@ for n in N:
 	L_Npts = int(L.r/ (2 * L_cutoff))
 	L.apply("bin_average", Npts = L_Npts, inplace = True)
 	L.aggrigate(collection_slice = slice(2, 500, 1))
-	#L.agg.plot(tmin=170e-6, tmax = 470e-6, ax = ax, tunit = "us")
+	L.agg.plot(tmin=400e-6, tmax = 470e-6, ax = ax, figsize = size, tunit = "us")
 	for i in list(range(2, 3)):
 		Li = L.collection[i]
 		Mi = M.collection[i]
@@ -102,7 +103,7 @@ for n in N:
 	L_Npts = int(L.r/ (2 * L_cutoff))
 	L.apply("bin_average", Npts = L_Npts, inplace = True)
 	L.aggrigate(collection_slice = slice(2, 500, 1))
-	#L.agg.plot(tmin=170e-6, tmax = 470e-6, ax = ax, tunit = "us")
+	#L.agg.plot(tmin=400e-6, tmax = 470e-6, ax = ax, tunit = "us")
 	for i in list(range(2, 3)):
 		Li = L.collection[i]
 		Mi = M.collection[i]
@@ -114,5 +115,6 @@ string = "\n" + str(19) + " J"
 plt.title(string, fontsize = 9)
 plt.suptitle("Acoustic Detection by Four Methods")
 plt.legend(["Sagnac", "Mic", "BPD", "PD"])
-plt.show()
+#plt.show()
 
+plt.savefig("Time-Domain Pulses.png")

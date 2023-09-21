@@ -6,9 +6,9 @@
 #I = [145]
 I = [145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160]
 
-Sagnac_name_index = [r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Sagnac\MinDetect\phi" + str(i) + ".tdms" for i in I]
-BPD_name_index = [r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\SplitBeam\MinDetect\phi" + str(i) + ".tdms" for i in I]
-PD_name_index = [r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Telescope\MinDetect\phi" + str(i) + ".tdms" for i in I]
+Sagnac_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Sagnac\MinDetect\phi" + str(i) + ".tdms" for i in I]
+BPD_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\SplitBeam\MinDetect\phi" + str(i) + ".tdms" for i in I]
+PD_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Telescope\MinDetect\phi" + str(i) + ".tdms" for i in I]
 
 import sys
 import numpy as np
@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 from scipy.special import erfinv
 from joblib import Parallel, delayed
 
-sys.path.append(r"C:\Users\ryans\OneDrive\Desktop\Research\brownian\src") 
+sys.path.append(r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\brownian\src") 
 from time_series import CollectionTDMS
 from acoustic_entrainment import mic_response
 
@@ -51,7 +51,7 @@ fc_list = list(np.linspace(20000, 2500000, 50))
 Iteration = [c for c in range(len(I))]
 	
 def Sagnac2(z, fc, tmin = 170e-6, tmax = 400e-6, cal = -1/0.00044):
-	Sagnac_name = r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Sagnac\MinDetect\phi" + str(z) + ".tdms"
+	Sagnac_name = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Sagnac\MinDetect\phi" + str(z) + ".tdms"
 	L = CollectionTDMS(Sagnac_name)
 	L.set_collection("X")
 	local_detrend(L, tmin = tmin, tmax = tmax, inplace = True)

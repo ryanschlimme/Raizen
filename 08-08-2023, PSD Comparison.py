@@ -20,8 +20,9 @@ PD_name = PD_name_index[0]
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 from scipy.special import erfinv
-cmap = plt.colormaps('tab20')
+#cmap = plt.colormaps('tab20')
 
 sys.path.append(r"C:\Users\ryans\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
 from time_series import CollectionTDMS, PSD
@@ -87,14 +88,31 @@ L.apply("bin_average", Npts = Npts, inplace = True)
 
 PDf, PDPSD = L.average("PSD", tmin = 437e-6, tmax = 457e-6, detrend = False)
 
-# Plotting
-ax.loglog(Micf, MicPSD, color = cmap[0])
-ax.loglog(Micf, MicPSDnoise, color = cmap[1]) 	# odd numbers are faded
-ax.loglog(Sagnacf, SagnacPSD)
-ax.loglog(BPDf, BPDPSD)
-ax.loglog(PDf, PDPSD)
-ax.legend(["Mic", "Sagnac", "BPD", "PD"])
-plt.xlabel("Frequency (Hz)")
-plt.title("PSD of Four Methods")
+cols = [Micf,
+		MicPSD,
+		Sagnacf,
+		SagnacPSD,
+		BPDf,
+		BPDPSD,
+		PDf,
+		PDPSD]
 
-plt.show()
+# Writing Data to CSV File
+df = pd.DataFrame(list(zip(*cols))).add_prefix('Col')
+
+df = df[1:]
+df.columns = ["Micf", "MicPSD", "Sagnacf", "SagnacPSD", "BPDf", "BPDPSD", "PDf", "PDPSD"]
+
+df.to_csv('PSD.csv', index=False)
+
+# Plotting
+#ax.loglog(Micf, MicPSD, color = cmap[0])
+#ax.loglog(Micf, MicPSDnoise, color = cmap[1]) 	# odd numbers are faded
+#ax.loglog(Sagnacf, SagnacPSD)
+#ax.loglog(BPDf, BPDPSD)
+#ax.loglog(PDf, PDPSD)
+#ax.legend(["Mic", "Sagnac", "BPD", "PD"])
+#plt.xlabel("Frequency (Hz)")
+#plt.title("PSD of Four Methods")
+
+#plt.show()
