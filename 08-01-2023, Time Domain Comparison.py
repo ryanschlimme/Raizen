@@ -70,10 +70,10 @@ for n in N:
 	L.agg.plot(tmin=400e-6, tmax = 470e-6, ax = ax, figsize = size, tunit = "us")
 	M.aggrigate(collection_slice = slice(2, 500, 1))
 	M.agg.plot(tmin=400e-6, tmax = 470e-6, ax = ax, figsize = size, c = "b", tunit = "us")
-	for i in list(range(1, 51)):
+	for i in list(range(2, 3)):
 		Li = L.collection[i]
 		Mi = M.collection[i]
-		#Li.plot(tmin = 420e-6, tmax = 470e-6, ax = ax, c = "crimson", tunit = "us")
+		#Li.plot(tmin = 400e-6, tmax = 470e-6, ax = ax, tunit = "us")
 		#Mi.plot(tmin = 420e-6, tmax = 470e-6, ax = ax, c = "C0", tunit = "us")
 
 for n in N:
@@ -90,7 +90,7 @@ for n in N:
 	for i in list(range(2, 3)):
 		Li = L.collection[i]
 		Mi = M.collection[i]
-		#Li.plot(tmin = 420e-6, tmax = 470e-6, ax = ax, c = "crimson", tunit = "us")
+		#Li.plot(tmin = 400e-6, tmax = 470e-6, ax = ax, c = "red", tunit = "us")
 		#Mi.plot(tmin = 420e-6, tmax = 470e-6, ax = ax, c = "C0", tunit = "us")
 
 for n in N:
@@ -103,11 +103,11 @@ for n in N:
 	L_Npts = int(L.r/ (2 * L_cutoff))
 	L.apply("bin_average", Npts = L_Npts, inplace = True)
 	L.aggrigate(collection_slice = slice(2, 500, 1))
-	#L.agg.plot(tmin=400e-6, tmax = 470e-6, ax = ax, tunit = "us")
+	L.agg.plot(tmin=400e-6, tmax = 470e-6, ax = ax, figsize = size, tunit = "us")
 	for i in list(range(2, 3)):
 		Li = L.collection[i]
 		Mi = M.collection[i]
-		#Li.plot(tmin = 420e-6, tmax = 470e-6, ax = ax, c = "crimson", tunit = "us")
+		#Li.plot(tmin = 400e-6, tmax = 470e-6, ax = ax, color = "r", tunit = "us")
 		#Mi.plot(tmin = 420e-6, tmax = 470e-6, ax = ax, c = "C0", tunit = "us")
 
 
@@ -115,6 +115,6 @@ string = "\n" + str(19) + " J"
 plt.title(string, fontsize = 9)
 plt.suptitle("Acoustic Detection by Four Methods")
 plt.legend(["Sagnac", "Mic", "BPD", "PD"])
-#plt.show()
+plt.show()
 
-plt.savefig("Time-Domain Pulses.png")
+#plt.savefig("Time-Domain Pulses.png")

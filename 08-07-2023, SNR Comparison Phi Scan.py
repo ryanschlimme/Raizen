@@ -3,8 +3,8 @@
 
 # Investigating signal to noise ratio of four acoustic measurement systems with various signal strengths using parallel processing.
 
-#I = [145]
-I = [145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160]
+I = [152]
+# I = [145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160]
 
 Sagnac_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Sagnac\MinDetect\phi" + str(i) + ".tdms" for i in I]
 BPD_name_index = [r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\SplitBeam\MinDetect\phi" + str(i) + ".tdms" for i in I]
@@ -45,7 +45,7 @@ def local_detrend(col, tmin = None, tmax = None, inplace = False) -> None:
 
 mu = 0
 
-fig, axes = plt.subplots(4, 4, sharex = True)
+fig, axes = plt.subplots(1, 2, sharex = False)
 fc_list = list(np.linspace(20000, 2500000, 50))
 
 Iteration = [c for c in range(len(I))]

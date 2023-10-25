@@ -7,13 +7,13 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-sys.path.append(r"C:\Users\ryans\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
+sys.path.append(r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
 from time_series import CollectionTDMS
 from acoustic_entrainment import mic_response
 from brownian import get_sound_speed
-from scipy.special import k1e
+from scipy.special import k1e, erfinv
 
-Sagnac_name = r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Sagnac\iter_0.tdms"
+Sagnac_name = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Sagnac\iter_0.tdms"
 
 def Phi(p):
     return np.sqrt(2) * erfinv(2*p-1)
@@ -41,7 +41,7 @@ def local_detrend(col, tmin = None, tmax = None, inplace = False) -> None:
 
 def Diaci(s, dist = 0.10, temp = 20, n0 = 1.00029):
     speed = get_sound_speed(T = temp, RH = 0.5, p = 99e3)
-    return -2/n0*dist/speed*s*k1e(s*dist/speed)
+    return -2/n0*dist/speed*2j*np.pi*s*k1e(s*dist/speed)
 
 
 N = [0]
@@ -72,11 +72,11 @@ L.apply("correct", response = Diaci)
 L.aggrigate(collection_slice = slice(1,500))
 L.agg.plot(tmin = 400e-6, tmax = 470e-6, ax = ax)
 M.aggrigate(collection_slice = slice(1,500))
-M.agg.plot(tmin = 400e-6, tmax = 470e-6, ax = ax)
+M.agg.plot(tmin = 400e-6, tmax = 470e-6, ax = ax, tunit = "us")
 
 #intArray = np.zeros((len(L.agg.x), 1))
 
-Ldata = [shot.time_gate(tmin = 400e-6, tmax = 470e-6)[1] for shot in L.collection]
+Ldata = [abs(shot.time_gate(tmin = 400e-6, tmax = 470e-6)[1]) for shot in L.collection]
 Ltime = [shot.time_gate(tmin = 400e-6, tmax = 470e-6)[0] for shot in L.collection]
 
 
