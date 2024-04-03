@@ -3,15 +3,15 @@
 
 # Comparing time domain laser pulses to calibrated microphone reading at 19 J. Applying known calibration to microphone to transfer to pressure signal. All in Sagnac interferometer with telescope and balanced photodetection. Attempt 2 to correct for potential misfire
 
-Sagnac_name = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Sagnac\iter_0.tdms"
-BPD_name = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\SplitBeam\iter_0.tdms"
-PD_name = r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\Data\20230801\Telescope\iter_0.tdms"
+Sagnac_name = r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Sagnac\iter_0.tdms"
+BPD_name = r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\SplitBeam\iter_0.tdms"
+PD_name = r"C:\Users\ryans\OneDrive\Desktop\Research\Data\20230801\Telescope\iter_0.tdms"
 
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-sys.path.append(r"C:\Users\Ryan Schlimme\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
+sys.path.append(r"C:\Users\ryans\OneDrive\Desktop\Research\brownian\src") 	# append path to brownian src folder (change Ryan Schlimme to ryans)
 from time_series import CollectionTDMS
 from acoustic_entrainment import mic_response						
 
